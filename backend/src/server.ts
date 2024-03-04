@@ -5,6 +5,7 @@ const app = express();
 const port = 3000;
 
 // Usa as rotas definidas no arquivo routes.ts
+app.use(express.json());
 app.use("/", routes);
 
 // Inicia o servidor na porta especificada
