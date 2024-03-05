@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Agendamento from "./components/Agendamento.jsx";
+import Modificar from "./components/Modificar.jsx";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
   {
     path: "/agendamento",
     element: <Agendamento />,
+  },
+  {
+    path: "/modificar/:id",
+    element: <Modificar />,
   },
 ]);
 
