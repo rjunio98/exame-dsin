@@ -54,7 +54,6 @@ router.put("/agendamentos/:id", async (req, res) => {
           "Não é possível modificar o agendamento com menos de 2 dias de antecedência.",
       });
     }
-    console.log("DATA AGENDAMENTO:::", dataAgendamento);
     const agendamentoAtualizado = await prisma.agendamento.update({
       where: { id },
       data: { data: new Date(dataAgendamento) },
