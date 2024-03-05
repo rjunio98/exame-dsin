@@ -16,24 +16,28 @@ router.post("/agendamentos", async (req: Request, res: Response) => {
     const novoAgendamento = await prisma.agendamento.create({
       data: {
         cliente,
-        servico,
+        servico: parseInt(servico),
         data: new Date(dataAgendamento),
       },
     });
 
     res.status(201).json(novoAgendamento);
   } catch (error) {
+    console.error("Erro ao agendar serviço:", error);
     res.status(500).json({ error: "Não foi possível agendar o serviço." });
   }
 });
 
 router.put("/agendamentos/:id", async (req, res) => {
   const id = parseInt(req.params.id);
+  console.log(req.params);
   const { dataAgendamento } = req.body;
 
   try {
     const agendamento = await prisma.agendamento.findUnique({
-      where: { id: id },
+      where: {
+        id,
+      },
     });
 
     if (!agendamento) {
@@ -50,14 +54,15 @@ router.put("/agendamentos/:id", async (req, res) => {
           "Não é possível modificar o agendamento com menos de 2 dias de antecedência.",
       });
     }
-
+    console.log("DATA AGENDAMENTO:::", dataAgendamento);
     const agendamentoAtualizado = await prisma.agendamento.update({
-      where: { id: id },
+      where: { id },
       data: { data: new Date(dataAgendamento) },
     });
 
     res.json(agendamentoAtualizado);
   } catch (error) {
+    console.log(error);
     res
       .status(500)
       .json({ error: "Não foi possível modificar o agendamento." });
@@ -67,20 +72,19 @@ router.put("/agendamentos/:id", async (req, res) => {
 router.get("/agendamentos/historico", async (req, res) => {
   const { dataInicial, dataFinal } = req.query;
 
-  if (typeof dataInicial !== "string" || typeof dataFinal !== "string") {
-    return res
-      .status(400)
-      .json({ error: "Data inicial e final devem ser strings." });
-  }
+  let where = {};
+
+  if (dataInicial && dataFinal)
+    where = {
+      data: {
+        gte: new Date(dataInicial as string),
+        lte: new Date(dataFinal as string),
+      },
+    };
 
   try {
     let historico = await prisma.agendamento.findMany({
-      where: {
-        data: {
-          gte: new Date(dataInicial),
-          lte: new Date(dataFinal),
-        },
-      },
+      where,
     });
 
     res.json(historico);
