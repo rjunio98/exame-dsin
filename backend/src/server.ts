@@ -1,10 +1,11 @@
 import express from "express";
 import routes from "./routes";
+import cors from "cors";
 
 const app = express();
 const port = 3000;
 
-// Usa as rotas definidas no arquivo routes.ts
+app.use(cors());
 app.use(express.json());
 app.use("/", routes);
 
