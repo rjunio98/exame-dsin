@@ -25,7 +25,6 @@ const Agendamento = () => {
         servico,
         dataAgendamento
       );
-      console.log("Agendamento realizado:", novoAgendamento);
 
       setCliente("");
       setServico("");
@@ -38,7 +37,6 @@ const Agendamento = () => {
   const handleHistorico = async () => {
     try {
       const historico = await obterHistoricoAgendamentos();
-      console.log("Histórico de agendamentos:", historico);
       setHistorico(historico);
     } catch (error) {
       console.error("Erro ao obter histórico de agendamentos:", error.message);
@@ -47,6 +45,28 @@ const Agendamento = () => {
 
   return (
     <div className="max-w-md mx-auto my-8">
+      <div className="flex items-center mb-4">
+        <Link
+          to="/"
+          className="flex items-center"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            className="w-10 h-10 cursor-pointer"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
+            />
+          </svg>
+          <h1 className="text-xl ml-2">Voltar</h1>
+        </Link>
+      </div>
+
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"

@@ -10,7 +10,7 @@ function Header() {
         width={50}
       />
 
-      <h1 className="text-2xl font-bold">Cabeleleira Leila</h1>
+      <h1 className="text-2xl font-bold">Salão Leila</h1>
 
       <ul className="flex space-x-4">
         <Link to="/">
