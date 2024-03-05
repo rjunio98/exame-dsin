@@ -1,133 +1,93 @@
-import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { Router, Request, Response } from "express";
 
 const prisma = new PrismaClient();
+
 const router = Router();
 
-router.post("/servicos", async (req: Request, res: Response) => {
-  const { nome, preco } = req.body;
-
-  try {
-    const novoServico = await prisma.servico.create({
-      data: {
-        nome,
-        preco,
-      },
-    });
-
-    res.status(201).json({
-      message: "Serviço criado com sucesso",
-      servico: novoServico,
-    });
-  } catch (error) {
-    return res.status(500).json("Erro ao criar serviço");
-  }
+router.get("/", (req: Request, res: Response) => {
+  res.send("Hello, world!");
 });
 
-router.post("/agendamento", async (req: Request, res: Response) => {
-  const { cliente, servicoId, dataHora } = req.body;
-
+router.post("/agendamentos", async (req: Request, res: Response) => {
   try {
-    const agendamentoExistente = await prisma.agendamento.findFirst({
-      where: {
-        dataHora: {
-          equals: new Date(dataHora),
-        },
-        status: {
-          not: "cancelado",
-        },
-      },
-    });
-
-    if (agendamentoExistente) {
-      return res
-        .status(400)
-        .json({ message: "Data e horário não estão disponíveis" });
-    }
+    const { cliente, servico, dataAgendamento } = req.body;
 
     const novoAgendamento = await prisma.agendamento.create({
       data: {
         cliente,
-        servicoId,
-        dataHora: new Date(dataHora).toISOString(),
-        status: "agendado",
+        servico,
+        data: new Date(dataAgendamento),
       },
     });
 
-    res.status(201).json({
-      message: "Agendamento realizado com sucesso",
-      agendamento: novoAgendamento,
-    });
+    res.status(201).json(novoAgendamento);
   } catch (error) {
-    return res.status(500).json("Erro ao criar agendamento");
+    res.status(500).json({ error: "Não foi possível agendar o serviço." });
   }
 });
 
-router.put("/agendamento/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { cliente, servicoId, dataHora } = req.body;
+router.put("/agendamentos/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { dataAgendamento } = req.body;
 
   try {
-    const agendamentoExistente = await prisma.agendamento.findFirst({
-      where: {
-        id: parseInt(id),
-      },
+    const agendamento = await prisma.agendamento.findUnique({
+      where: { id: id },
     });
 
-    if (!agendamentoExistente) {
-      return res.status(404).json({ message: "Agendamento não encontrado" });
+    if (!agendamento) {
+      return res.status(404).json({ error: "Agendamento não encontrado." });
     }
 
-    const dataLimite = new Date(agendamentoExistente.dataHora);
+    const hoje = new Date();
+    const dataLimite = new Date(agendamento.data);
     dataLimite.setDate(dataLimite.getDate() - 2);
-    if (new Date(dataHora) > dataLimite) {
+
+    if (hoje.getTime() > dataLimite.getTime()) {
       return res.status(400).json({
-        message:
-          "Não é possível modificar o agendamento tão perto da data marcada",
+        error:
+          "Não é possível modificar o agendamento com menos de 2 dias de antecedência.",
       });
     }
 
     const agendamentoAtualizado = await prisma.agendamento.update({
-      where: {
-        id: parseInt(id),
-      },
-      data: {
-        cliente,
-        servicoId,
-        dataHora: new Date(dataHora).toISOString(),
-      },
+      where: { id: id },
+      data: { data: new Date(dataAgendamento) },
     });
 
-    res.status(200).json({
-      message: "Agendamento atualizado com sucesso",
-      agendamento: agendamentoAtualizado,
-    });
+    res.json(agendamentoAtualizado);
   } catch (error) {
-    return res.status(500).json("Erro ao atualizar agendamento");
+    res
+      .status(500)
+      .json({ error: "Não foi possível modificar o agendamento." });
   }
 });
 
-router.get("/agendamento/historico", async (req: Request, res: Response) => {
-  try {
-    const agendamentosPassados = (await prisma.agendamento.findMany()).map(
-      (agendamento) => ({
-        ...agendamento,
-        dataHora: new Date(agendamento.dataHora).toLocaleDateString("pt-BR", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-          minute: "2-digit",
-          hour: "2-digit",
-        }),
-      })
-    );
+router.get("/agendamentos/historico", async (req, res) => {
+  const { dataInicial, dataFinal } = req.query;
 
-    res.status(200).json({
-      message: "Lista de agendamentos passados",
-      agendamentos: agendamentosPassados,
+  if (typeof dataInicial !== "string" || typeof dataFinal !== "string") {
+    return res
+      .status(400)
+      .json({ error: "Data inicial e final devem ser strings." });
+  }
+
+  try {
+    let historico = await prisma.agendamento.findMany({
+      where: {
+        data: {
+          gte: new Date(dataInicial),
+          lte: new Date(dataFinal),
+        },
+      },
     });
+
+    res.json(historico);
   } catch (error) {
-    return res.status(500).json("Erro ao buscar histórico de agendamentos");
+    res
+      .status(500)
+      .json({ error: "Não foi possível obter o histórico de agendamentos." });
   }
 });
 
