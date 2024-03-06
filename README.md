@@ -8,7 +8,7 @@ Este é um sistema de agendamento completo, desenvolvido para simplificar a gest
 - **Modificar Agendamento**: Permite aos usuários alterar a data de um agendamento existente com base no seu ID, oferecendo flexibilidade e facilidade de gerenciamento.
 - **Obter Histórico de Agendamentos**: Os usuários têm acesso ao histórico completo de todos os agendamentos realizados, facilitando a consulta de informações passadas e o acompanhamento do histórico de clientes.
 
-  [<img src="./design/agendamento.gif" alt="gif do projeto">]
+[<img src="./design/agendamento.gif" alt="gif do projeto">]
 
 ## Tecnologias Utilizadas
 
