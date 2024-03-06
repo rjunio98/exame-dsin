@@ -1,14 +1,14 @@
 # Sistema de Agendamento
 
-Este é um sistema de agendamento desenvolvido com Docker, PostgreSQL, Prisma, Express, TypeScript e React.js.
+Este é um sistema de agendamento completo, desenvolvido para simplificar a gestão de horários e serviços em salões de beleza. Utilizando tecnologias modernas como Docker, PostgreSQL, Prisma, Express, TypeScript e React.js, o sistema oferece uma experiência de agendamento eficiente e intuitiva.
 
 ## Funcionalidades
 
-- **Criar Agendamento**: Os usuários podem criar um novo agendamento especificando o cliente, o serviço e a data desejada.
-- **Modificar Agendamento**: É possível modificar a data de um agendamento existente com base no seu ID.
-- **Obter Histórico de Agendamentos**: Os usuários podem visualizar o histórico de todos os agendamentos realizados.
+- **Criar Agendamento**: Os usuários podem agendar um novo serviço, especificando o cliente, o serviço desejado e a data desejada.
+- **Modificar Agendamento**: Permite aos usuários alterar a data de um agendamento existente com base no seu ID, oferecendo flexibilidade e facilidade de gerenciamento.
+- **Obter Histórico de Agendamentos**: Os usuários têm acesso ao histórico completo de todos os agendamentos realizados, facilitando a consulta de informações passadas e o acompanhamento do histórico de clientes.
 
-[<img src="./design/agendamento.gif" alt="gif do projeto">]
+  [<img src="./design/agendamento.gif" alt="gif do projeto">]
 
 ## Tecnologias Utilizadas
 
